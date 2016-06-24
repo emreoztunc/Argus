@@ -1,0 +1,221 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        body { text-align: center; }
+        .tableManagerContainer { width: 700px;}
+        .tableManagerContainer,
+        .tableManagerContainer .mainTable { margin: 20px auto; }
+        .tableManagerContainer .mainTable { border: 1px solid silver; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
+        .tableManagerContainer .mainTable tr { transition-property: background-color; transition-duration: 1s; height: 30px; line-height: 30px; }
+        .tableManagerContainer .mainTable td { padding: 5px; }
+        .tableManagerContainer .mainTable th { border-bottom: 1px solid silver; }
+        .dragFlange { border:1px solid blue; cursor:pointer; border-bottom-left-radius: 5px; -webkit-border-bottom-left-radius: 5px; -moz-border-radius-bottomleft: 5px; border-top-left-radius: 5px; -webkit-border-top-left-radius: 5px; -moz-border-radius-topLeft: 5px;  }
+        .dragFlange:hover { background-color: beige; }
+    </style>
+    <script type="text/javascript">
+        var studentTableManager = {};
+        var globalStudentList = [
+            {
+                'name': 'Ahmet',
+                'surName': 'Avci',
+                'number': 1,
+                'birthDate': '28 Haziran 2009'
+            },
+            {
+                'name': 'Nese',
+                'surName': 'Berk',
+                'number': 2,
+                'birthDate': '5 Ocak 2001'
+            },
+            {
+                'name': 'Selim',
+                'surName': 'Ileri',
+                'number': 3,
+                'birthDate': '12 Temmuz 2003'
+            },
+            {
+                'name': 'Burhan',
+                'surName': 'Altintop',
+                'number': 4,
+                'birthDate': '8 Mayis 2005'
+            },
+            {
+                'name': 'Mujde',
+                'surName': 'Zenginler',
+                'number': 5,
+                'birthDate': '2 Mart 2007'
+            }
+        ];
+
+        TableManager = function(opt_list) {
+            var randomNumber = Math.floor(Math.random() * 2147483648);
+            this.id = (randomNumber++).toString(36);
+            this.baseList = opt_list || [];
+            this.load(opt_list);
+        };
+
+        TableManager.prototype.load = function(opt_list) {
+            var that = this;
+
+            if (opt_list && opt_list.length > 0) {
+                that.baseList = opt_list;
+            }
+            that.entityList = [];
+            for(var i = 1; i <= that.baseList.length; i++) {
+                that.entityList.push(new StudentEntity(that.baseList[i-1]));
+            }
+        };
+
+        TableManager.prototype.getPlaceHolder = function() {
+            return this.template_base();
+        };
+
+        TableManager.prototype.getElement = function() {
+            var rv = this.element;
+            if (!rv) rv = this.element = document.getElementById(this.id);
+            return rv;
+        };
+
+        TableManager.prototype.render = function(opt_base, opt_index) {
+            if (opt_base) {
+                this.element = this.createElement(this.template_base());
+                opt_base.insertBefore(this.element, opt_base.childNodes[opt_index] || null);
+            }
+        };
+
+        TableManager.prototype.createMainTable = function(opt_callback) {
+            var that = this;
+            that.element.innerHTML = '';
+            that.table = that.createElement(that.template_table());
+            that.element.appendChild(that.table);
+            opt_callback && opt_callback();
+            that.lastUpdatedItemRowId && that.higlightChange();
+        };
+
+        TableManager.prototype.changeStudentOrder = function(oldValue, newValue) {
+            var that = this,
+                tempList = that.baseList,
+                tempItem = tempList[oldValue - 1];
+
+            tempList.splice(oldValue - 1, 1);
+            tempList.splice(newValue - 1, 0, tempItem);
+            tempList[newValue - 1]['number'] = newValue;
+
+            that.lastUpdatedItemRowId = 'row_' + newValue;
+
+            if (oldValue > newValue) {
+                oldValue += newValue;
+                newValue = oldValue - newValue;
+                oldValue = oldValue - newValue;
+            }
+
+            for(var i = oldValue - 1; i <= newValue - 1; i++) {
+                tempList[i]['number'] = i + 1;
+            }
+
+            that.load(tempList);
+            that.createMainTable();
+        };
+
+        TableManager.prototype.higlightChange = function() {
+            var that = this;
+            var target = document.getElementById(that.lastUpdatedItemRowId);
+            target.style.backgroundColor = 'aqua';
+            setTimeout(function() {
+                target.style.backgroundColor = 'white';
+            }, 100)
+        };
+
+        TableManager.prototype.updateGlobalList = function() {
+
+        };
+
+        TableManager.prototype.createElement = function(htmlString, opt_type) {
+            var tempDiv = document.createElement(opt_type || 'div');
+            tempDiv.innerHTML = htmlString;
+            return /** @type {!Node} */ (tempDiv.removeChild(tempDiv.firstChild));
+        };
+
+        TableManager.prototype.template_base = function() {
+            return '<div id="' + this.id + '" class="tableManagerContainer">Table Manager</div>';
+        };
+
+        TableManager.prototype.template_table = function() {
+            var that = this;
+            var rv = '<table class="mainTable" border="1">' + that.template_header();
+            for(var i = 0; i < that.baseList.length; i ++) {
+                rv += that.template_row(that.baseList[i]);
+            }
+            rv += '</table>';
+            return rv;
+        };
+
+        TableManager.prototype.template_header = function() {
+            return '<tr class="tableHeader">' +
+                    '<th></th>' +
+                    '<th>Sıra</th>' +
+                    '<th>Ad</th>' +
+                    '<th>Soyad</th>' +
+                    '<th>Doğum Tarihi</th>' +
+                '</tr>';
+        };
+
+        TableManager.prototype.template_row = function(listItem) {
+            return '<tr id="row_' + listItem['number'] + '" ondrop="drop(event, ' + listItem['number'] + ')" ' +
+                        'ondragover="allowDrop(event)">' +
+                    '<td  id="drag_' + listItem['number'] + '" class="dragFlange" draggable="true" ' +
+                        'ondragstart="drag(event)" data-number="' + listItem['number'] + '">^</td>' +
+                    '<td>' + listItem['number'] + '</td>' +
+                    '<td>' + listItem['name'] + '</td>' +
+                    '<td>' + listItem['surName'] + '</td>' +
+                    '<td>' + listItem['birthDate'] + '</td>' +
+                '</tr>';
+        };
+
+        StudentEntity = function(params) {
+            this.number = params['number'] || 0;
+            this.name = params['name'] || '';
+            this.surName = params['surName'] || '';
+            this.birthDate = params['birthDate'] || '';
+        };
+
+        StudentEntity.prototype.incrementStudentNumber  = function(opt_newOrder) {
+            if (opt_newOrder && opt_newOrder > 1) {
+                this.order = opt_newOrder;
+            } else {
+                this.order++;
+            }
+        };
+
+        function allowDrop(e) {
+            e.preventDefault();
+        }
+
+        function drag(e) {
+            e.target.parentNode.style.backgroundColor = 'aqua';
+            e.target.style.backgroundColor = 'aqua';
+            e.dataTransfer.setData("sourceId", e.target.id.slice(5));
+        }
+
+        function drop(e, number) {
+            e.preventDefault();
+            var targetId = e.target.id;
+            var data = e.dataTransfer.getData("sourceId");
+            studentTableManager.changeStudentOrder(parseInt(data, 10), parseInt(number, 10));
+        }
+    </script>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            studentTableManager = new TableManager(globalStudentList);
+            studentTableManager.render(document.body);
+            studentTableManager.createMainTable();
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>
