@@ -50,7 +50,90 @@
                 'birthDate': '2 Mart 2007'
             }
         ];
+        var globalStudentListLong = [
+            {
+                'name': 'Ahmet',
+                'surName': 'Avci',
+                'number': 1,
+                'birthDate': '28 Haziran 2009'
+            },
+            {
+                'name': 'Nese',
+                'surName': 'Berk',
+                'number': 2,
+                'birthDate': '5 Ocak 2001'
+            },
+            {
+                'name': 'Selim',
+                'surName': 'Ileri',
+                'number': 3,
+                'birthDate': '12 Temmuz 2003'
+            },
+            {
+                'name': 'Burhan',
+                'surName': 'Altintop',
+                'number': 4,
+                'birthDate': '8 Mayis 2005'
+            },
+            {
+                'name': 'Mujde',
+                'surName': 'Zenginler',
+                'number': 5,
+                'birthDate': '2 Mart 2007'
+            },
+            {
+                'name': 'Nese',
+                'surName': 'Berk',
+                'number': 6,
+                'birthDate': '5 Ocak 2001'
+            },
+            {
+                'name': 'Selim',
+                'surName': 'Ileri',
+                'number': 7,
+                'birthDate': '12 Temmuz 2003'
+            },
+            {
+                'name': 'Burhan',
+                'surName': 'Altintop',
+                'number': 8,
+                'birthDate': '8 Mayis 2005'
+            },
+            {
+                'name': 'Mujde',
+                'surName': 'Zenginler',
+                'number': 9,
+                'birthDate': '2 Mart 2007'
+            },
+            {
+                'name': 'Nese',
+                'surName': 'Berk',
+                'number': 10,
+                'birthDate': '5 Ocak 2001'
+            },
+            {
+                'name': 'Selim',
+                'surName': 'Ileri',
+                'number': 11,
+                'birthDate': '12 Temmuz 2003'
+            },
+            {
+                'name': 'Burhan',
+                'surName': 'Altintop',
+                'number': 12,
+                'birthDate': '8 Mayis 2005'
+            },
+            {
+                'name': 'Mujde',
+                'surName': 'Zenginler',
+                'number': 13,
+                'birthDate': '2 Mart 2007'
+            }
+        ];
 
+        //This is the constructor for TableManager.
+        //It takes an optional list whic is an array of objects known as 'students'.
+        //Create an instance to use.
         TableManager = function(opt_list) {
             var randomNumber = Math.floor(Math.random() * 2147483648);
             this.id = (randomNumber++).toString(36);
@@ -58,6 +141,8 @@
             this.load(opt_list);
         };
 
+        //Load method updates the object's baseList and entityList with given list
+        //or creates an empty list instead if there is no array passed into this method.
         TableManager.prototype.load = function(opt_list) {
             var that = this;
 
@@ -70,6 +155,7 @@
             }
         };
 
+        //Returns the base template in order to give a chance to create base element.
         TableManager.prototype.getPlaceHolder = function() {
             return this.template_base();
         };
@@ -80,6 +166,8 @@
             return rv;
         };
 
+        //Renders the TableManager onto given base element (opt_base) or body if there's no given base.
+        //If you want it to be rendered before a specific element within a base element, you can pass an index number.
         TableManager.prototype.render = function(opt_base, opt_index) {
             if (opt_base) {
                 this.element = this.createElement(this.template_base());
@@ -87,6 +175,9 @@
             }
         };
 
+        //Creates main table.
+        //Takes an optional callback to call.
+        //Calls row highlighter method after a successful change.
         TableManager.prototype.createMainTable = function(opt_callback) {
             var that = this;
             that.element.innerHTML = '';
@@ -96,6 +187,8 @@
             that.lastUpdatedItemRowId && that.higlightChange();
         };
 
+        //Reorders students after drag and drop action.
+        //Afterwards, triggers the main table creator method to display the new order.
         TableManager.prototype.changeStudentOrder = function(oldValue, newValue) {
             var that = this,
                 tempList = that.baseList,
@@ -113,6 +206,8 @@
                 oldValue = oldValue - newValue;
             }
 
+            //There is no necessary to change the number of items within baseList if they are out of the boundaries
+            //of the replacement. So, this loop updates the number value of related items only.
             for(var i = oldValue - 1; i <= newValue - 1; i++) {
                 tempList[i]['number'] = i + 1;
             }
@@ -121,6 +216,7 @@
             that.createMainTable();
         };
 
+        //For a better user experience, the manager higlights the moved row for a while after the drag and drop action.
         TableManager.prototype.higlightChange = function() {
             var that = this;
             var target = document.getElementById(that.lastUpdatedItemRowId);
@@ -130,10 +226,7 @@
             }, 100)
         };
 
-        TableManager.prototype.updateGlobalList = function() {
-
-        };
-
+        //This method is being used to create elements in order to append to another element.
         TableManager.prototype.createElement = function(htmlString, opt_type) {
             var tempDiv = document.createElement(opt_type || 'div');
             tempDiv.innerHTML = htmlString;
@@ -176,6 +269,10 @@
                 '</tr>';
         };
 
+        //Constructor for Student Entity.
+        //This is an object, storing data.
+        //Can have methods for dom manipulations or event triggers, but, due to the narrow scope of this assignment
+        //i did not add exceptional methods.
         StudentEntity = function(params) {
             this.number = params['number'] || 0;
             this.name = params['name'] || '';
@@ -183,6 +280,7 @@
             this.birthDate = params['birthDate'] || '';
         };
 
+        //You can increment the student number one at a step or more than one in one step.
         StudentEntity.prototype.incrementStudentNumber  = function(opt_newOrder) {
             if (opt_newOrder && opt_newOrder > 1) {
                 this.order = opt_newOrder;
@@ -210,7 +308,9 @@
     </script>
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
+            //if you want to see the efficiency with a longer list, comment out the next line and start to use the one next to it.
             studentTableManager = new TableManager(globalStudentList);
+//            studentTableManager = new TableManager(globalStudentListLong);
             studentTableManager.render(document.body);
             studentTableManager.createMainTable();
         });
