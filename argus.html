@@ -138,6 +138,7 @@
             var randomNumber = Math.floor(Math.random() * 2147483648);
             this.id = (randomNumber++).toString(36);
             this.baseList = opt_list || [];
+            this.dragStartingPoint = undefined;
             this.load(opt_list);
         };
 
@@ -189,10 +190,11 @@
 
         //Reorders students after drag and drop action.
         //Afterwards, triggers the main table creator method to display the new order.
-        TableManager.prototype.changeStudentOrder = function(oldValue, newValue) {
+        TableManager.prototype.changeStudentOrder = function(newValue) {
             var that = this,
                 tempList = that.baseList,
-                tempItem = tempList[oldValue - 1];
+                oldValue = that.dragStartingPoint,
+                    tempItem = tempList[oldValue - 1];
 
             tempList.splice(oldValue - 1, 1);
             tempList.splice(newValue - 1, 0, tempItem);
@@ -224,6 +226,11 @@
             setTimeout(function() {
                 target.style.backgroundColor = 'white';
             }, 100)
+        };
+
+        //This method is being used to create elements in order to append to another element.
+        TableManager.prototype.setDragStarterId = function(dragStartingPoint) {
+            this.dragStartingPoint = dragStartingPoint;
         };
 
         //This method is being used to create elements in order to append to another element.
@@ -296,21 +303,20 @@
         function drag(e) {
             e.target.parentNode.style.backgroundColor = 'aqua';
             e.target.style.backgroundColor = 'aqua';
-            e.dataTransfer.setData("sourceId", e.target.id.slice(5));
+            studentTableManager.setDragStarterId(parseInt(e.target.id.slice(5), 10));
         }
 
         function drop(e, number) {
             e.preventDefault();
             var targetId = e.target.id;
-            var data = e.dataTransfer.getData("sourceId");
-            studentTableManager.changeStudentOrder(parseInt(data, 10), parseInt(number, 10));
+            studentTableManager.changeStudentOrder(parseInt(number, 10));
         }
     </script>
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
             //if you want to see the efficiency with a longer list, comment out the next line and start to use the one next to it.
-            studentTableManager = new TableManager(globalStudentList);
-//            studentTableManager = new TableManager(globalStudentListLong);
+//            studentTableManager = new TableManager(globalStudentList);
+            studentTableManager = new TableManager(globalStudentListLong);
             studentTableManager.render(document.body);
             studentTableManager.createMainTable();
         });
