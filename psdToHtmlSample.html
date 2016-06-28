@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Simple Little Table</title>
+    <!--Bu Hazirlik Argus Icin yapilmistir-->
+    <style type="text/css">
+        body { background-color: #fafafa; }
+        #tableContainer { width: 100%; margin: 0 auto; padding-top: 100px; }
+        table { margin: 0 auto; font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: #555; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; -moz-box-shadow: 0 1px 2px 2px #f2f2f2; -webkit-box-shadow: 0 1px 2px 2px #f2f2f2; box-shadow: 0 1px 2px 2px #f2f2f2;}
+        table thead { color: #666; border-top: 1px solid #fafafa; border-bottom: 1px solid #e0e0e0; }
+        table thead th { background-color: #e5e7e8; width: 105px; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; font-weight: bold; }
+        table tr { background: #fafafa; line-height: 50px; }
+        table tr.evenRow { background: #f7f7f7; background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#f6f6f6)); background: -moz-linear-gradient(top,  #f8f8f8,  #f6f6f6);  background: linear-gradient(#f8f8f8, #f6f6f6); }
+        table td { width: 105px; text-align: center; border-bottom: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;  }
+        table tr.evenRow td { border-top: 1px solid #fafafa;  }
+        table td:first-child,
+        table thead th:first-child{ text-align: left; padding-left: 30px; width: 260px; border-left: 1px solid #e0e0e0; }
+        table tr:first-child th:first-child { border-top-left-radius: 4px; }
+        table tr:first-child th:last-child { border-top-right-radius: 4px; }
+        table tr:last-child td:first-child { border-bottom-left-radius: 4px; }
+        table tr:last-child td:last-child { border-bottom-right-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div id="tableContainer">
+        <table cellspacing="0">
+            <thead>
+                <tr>
+                    <th>
+                        Task Details
+                    </th>
+                    <th>
+                        Progress
+                    </th>
+                    <th>
+                        Vital Task
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Create pretty table design</td>
+                    <td>100%</td>
+                    <td>Yes</td>
+                </tr>
+                <tr class="evenRow">
+                    <td>Take the dog for a walk</td>
+                    <td>100%</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>Waste half the day on Twitter</td>
+                    <td>20%</td>
+                    <td>No</td>
+                </tr>
+                <tr class="evenRow">
+                    <td>Feel inferior after viewing Dribble</td>
+                    <td>80%</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>Wince at "to do" list</td>
+                    <td>100%</td>
+                    <td>Yes</td>
+                </tr>
+                <tr class="evenRow">
+                    <td>Vow to complete personal project</td>
+                    <td>23%</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>Procrastinate</td>
+                    <td>80%</td>
+                    <td>No</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
